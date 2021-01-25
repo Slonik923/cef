@@ -12,6 +12,10 @@
 #include "third_party/skia/include/core/SkCanvas.h"
 #include "ui/gfx/skia_util.h"
 
+#include "SkPictureRecorder.h"
+#include "SkPicture.h"
+#include "SkStream.h"
+
 #if defined(OS_WIN)
 #include <windows.h>
 #include "skia/ext/skia_utils_win.h"
@@ -27,6 +31,9 @@ SoftwareOutputDeviceProxy::SoftwareOutputDeviceProxy(
     mojom::LayeredWindowUpdaterPtr layered_window_updater)
     : layered_window_updater_(std::move(layered_window_updater)) {
   DCHECK(layered_window_updater_.is_bound());
+
+ // Slonocodes
+	SkPictureRecorder recorder;
 }
 
 void SoftwareOutputDeviceProxy::OnSwapBuffers(
@@ -94,6 +101,8 @@ void SoftwareOutputDeviceProxy::Resize(const gfx::Size& viewport_pixel_size,
       region.GetPlatformHandle(), skia::CRASH_ON_FAILURE);
 #endif
 
+  recordingCanvas_ = recorder.beginRecording(viewport_pixel_size_.width(), viewport_pixel_size_.height()); // SlonoChange
+
   // Transfer region ownership to the browser process.
   layered_window_updater_->OnAllocatedSharedMemory(viewport_pixel_size_,
                                                    std::move(region));
@@ -128,6 +137,13 @@ void SoftwareOutputDeviceProxy::EndPaint() {
       damage_rect_, base::BindOnce(&SoftwareOutputDeviceProxy::DrawAck,
                                    base::Unretained(this)));
   waiting_on_draw_ack_ = true;
+
+  // Slono codes
+    sk_sp<SkPicture> picture = recorder.finishRecordingAsPicture();
+    SkFILEWStream skpStream("out_picture.skp");
+    // Open SKP files with `viewer --skps PATH_TO_SKP --slide SKP_FILE`
+    picture->serialize(&skpStream);
+  // END of Slono codes
 
   TRACE_EVENT_ASYNC_BEGIN0("viz", "SoftwareOutputDeviceProxy::Draw", this);
 }

@@ -37,6 +37,7 @@ class VIZ_SERVICE_EXPORT SoftwareOutputDeviceProxy
   mojom::LayeredWindowUpdaterPtr layered_window_updater_;
 
   std::unique_ptr<SkCanvas> canvas_;
+  std::unique_ptr<SkCanvas> recordingCanvas_; //SlonoChange
   bool waiting_on_draw_ack_ = false;
   bool in_paint_ = false;
   base::OnceClosure swap_ack_callback_;
