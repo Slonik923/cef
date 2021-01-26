@@ -32,8 +32,6 @@ SoftwareOutputDeviceProxy::SoftwareOutputDeviceProxy(
     : layered_window_updater_(std::move(layered_window_updater)) {
   DCHECK(layered_window_updater_.is_bound());
 
- // Slonocodes
-	SkPictureRecorder recorder;
 }
 
 void SoftwareOutputDeviceProxy::OnSwapBuffers(
@@ -64,6 +62,7 @@ void SoftwareOutputDeviceProxy::Resize(const gfx::Size& viewport_pixel_size,
   viewport_pixel_size_ = viewport_pixel_size;
 
   canvas_.reset();
+  recordingCanvas_.reset();
 
   size_t required_bytes;
   if (!ResourceSizes::MaybeSizeInBytes(
@@ -101,7 +100,7 @@ void SoftwareOutputDeviceProxy::Resize(const gfx::Size& viewport_pixel_size,
       region.GetPlatformHandle(), skia::CRASH_ON_FAILURE);
 #endif
 
-  recordingCanvas_ = recorder.beginRecording(viewport_pixel_size_.width(), viewport_pixel_size_.height()); // SlonoChange
+  recordingCanvas_ = make_unique<SkCanvas>(recorder.beginRecording(viewport_pixel_size_.width(), viewport_pixel_size_.height())); // SlonoChange
 
   // Transfer region ownership to the browser process.
   layered_window_updater_->OnAllocatedSharedMemory(viewport_pixel_size_,
