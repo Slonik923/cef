@@ -8,6 +8,10 @@
 #include "services/viz/privileged/mojom/compositing/display_private.mojom.h"
 #include "services/viz/privileged/mojom/compositing/layered_window_updater.mojom.h"
 
+#include "include/core/SkPictureRecorder.h"
+#include "include/core/SkPicture.h"
+#include "include/core/SkStream.h"
+
 namespace viz {
 
 // SoftwareOutputDevice implementation that draws indirectly. An
