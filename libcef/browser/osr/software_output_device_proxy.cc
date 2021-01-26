@@ -12,10 +12,6 @@
 #include "third_party/skia/include/core/SkCanvas.h"
 #include "ui/gfx/skia_util.h"
 
-#include "SkPictureRecorder.h"
-#include "SkPicture.h"
-#include "SkStream.h"
-
 #if defined(OS_WIN)
 #include <windows.h>
 #include "skia/ext/skia_utils_win.h"
